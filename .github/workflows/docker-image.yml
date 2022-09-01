@@ -1,0 +1,51 @@
+name: build_and_push_to_manifest
+env:
+  GITLAB_REGISTRY: aamir454/bookinfo-project
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  build_and_push_image:
+    runs-on: devops-pak
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+      -
+        name: Login to registry
+        uses: actions/checkout@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build docker image
+        run: |
+          docker build -f Dockerfile -t aamir454/bookinfo-project:${GITHUB_SHA::8} .
+      - name: Push image to gitlab registry
+        run: |
+          docker push aamir454/bookinfo-project:${GITHUB_SHA::8}
+          
+  push_to_manifest:
+    runs-on: devops-pak
+    name: push to manifest
+    needs:
+      - build_and_push_image
+    steps:
+      - name: Checkout manifest repo
+        uses: actions/checkout@v2
+        with:
+          repository: pakdevops/manifests
+          token: ${{ secrets.REPO_ACCESS_TOKEN}}
+
+      - name: Set up tools
+        uses: pakdevops/action@set_up_tools
+
+      - name: Push to dev
+        ## your main branch
+        ## push the image name to env-dev/${{ github.repository }}
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: pakdevops/action@deploy_to_dev
+        with:
+          ALIAS_GITHUB_REPOSITORY: ${{ github.repository }}
+          TES_ENV: dev
