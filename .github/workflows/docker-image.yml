@@ -1,6 +1,11 @@
 name: build_and_push_to_manifest
 env:
   GITLAB_REGISTRY: aamir454/bookinfo-project
+  REPOSITORY_NAME: maven
+  ARGOCD_REPO_NAME: pakdevops/maven
+  NS: dev-deployment
+  CI_REGISTRY_IMAGE: maven
+  GITLAB_IMAGE_NAME: 'aamir454/bookinfo-project:${GITHUB_SHA::8}'
 on:
   push:
     branches:
@@ -25,27 +30,51 @@ jobs:
       - name: Push image to gitlab registry
         run: |
           docker push aamir454/bookinfo-project:${GITHUB_SHA::8}
-          
-  push_to_manifest:
+
+  deploy_to_dev:
     runs-on: devops-pak
-    name: push to manifest
     needs:
       - build_and_push_image
     steps:
-      - name: Checkout manifest repo
+      - name: Display the repository name
+        run: echo "$REPOSITORY_NAME , $ARGOCD_REPO_NAME"
+        shell: bash
+
+      - name: Setup User and email for GIT next push
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name ${{ github.actor }}
+          git config -l
+
+      - name: Display the current folders
+        run: |
+          pwd
+          ls
+
+      - name: Clone Deployment Manifests Repo
         uses: actions/checkout@v2
         with:
           repository: pakdevops/manifests
-          token: ${{ secrets.REPO_ACCESS_TOKEN}}
-
-      - name: Set up tools
-        uses: pakdevops/action@set_up_tools
-
-      - name: Push to dev
-        ## your main branch
-        ## push the image name to env-dev/${{ github.repository }}
-        if: ${{ github.ref == 'refs/heads/main' }}
-        uses: pakdevops/action@deploy_to_dev
-        with:
-          ALIAS_GITHUB_REPOSITORY: ${{ github.repository }}
-          TES_ENV: dev
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: manifests
+      - name: Update Images via yq
+        shell: bash
+        run: |
+          ls
+          cd manifests/dev-env/maven
+          ls
+          export commitnum=${GITHUB_SHA::8}
+          echo $commitnum
+          yq e -i '.image.tag = env(commitnum)' values.yaml
+          cat values.yaml
+          
+      - name: Push manifests changes to ArgoCD's manifest repo
+        run: |
+          cd manifests
+          git config user.name ${GITHUB_ACTOR}
+          git config user.email ${GITHUB_ACTOR}@github.com
+          git diff
+          git add .
+          git commit -m "${GITHUB_REPOSITORY}_${GITHUB_JOB}_${GITHUB_SHA:0:7}_details:${CI_COMMIT_MESSAGE}"
+          git push
+          

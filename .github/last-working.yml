@@ -1,23 +1,40 @@
-name: dev ci
-
-on:
-  push:
-    branches: [main]
-  # pull_request:
-  # branches: [main]
+name: build_and_push_to_manifest
 env:
+  GITLAB_REGISTRY: aamir454/bookinfo-project
   REPOSITORY_NAME: maven
   ARGOCD_REPO_NAME: pakdevops/maven
   NS: dev-deployment
   CI_REGISTRY_IMAGE: maven
   GITLAB_IMAGE_NAME: 'aamir454/bookinfo-project:${GITHUB_SHA::8}'
+on:
+  push:
+    branches:
+      - 'main'
 
 jobs:
+  build_and_push_image:
+    runs-on: devops-pak
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+      -
+        name: Login to registry
+        uses: actions/checkout@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build docker image
+        run: |
+          docker build -f Dockerfile -t aamir454/bookinfo-project:${GITHUB_SHA::8} .
+      - name: Push image to gitlab registry
+        run: |
+          docker push aamir454/bookinfo-project:${GITHUB_SHA::8}
 
   deploy_to_dev:
     runs-on: devops-pak
     needs:
-      - build_test
+      - build_and_push_image
     steps:
       - name: Display the repository name
         run: echo "$REPOSITORY_NAME , $ARGOCD_REPO_NAME"
@@ -29,11 +46,6 @@ jobs:
           git config --global user.name ${{ github.actor }}
           git config -l
 
-      # - name: Checkout tests
-      #   env:
-      #     REPO_ACCESS_TOKEN: ${{ secrets.DOCKER_AUTH_TOKEN }}
-      #   run: git clone -b master https://$REPO_ACCESS_TOKEN:x-oauth-basic@github.com/tespkg/ams-regulator-reporting-fe-argocd.git ams-regulator-reporting-fe-argocd
-
       - name: Display the current folders
         run: |
           pwd
@@ -42,32 +54,22 @@ jobs:
       - name: Clone Deployment Manifests Repo
         uses: actions/checkout@v2
         with:
-          repository: tespkg/tes_manifests
-          token: ${{ secrets.TES_MANIFEST_TOKEN }}
-          path: tes_manifests
-
-      # - name: Push to ArgoCD
-      #   env:
-      #     tag: ${GITHUB_SHA:0:8}
-      #   run: |
-      #     cd ams-regulator-reporting-fe-argocd
-      #     cd helm/0-0-dev-gke-dev/ams-regulator-reporting-fe
-      #     sed -i '/repository:/c\    repository: docker.pkg.github.com/tespkg/ams-regulator-reporting-fe/ams-regulator-reporting-fe:'"${GITHUB_SHA:0:8}" values.yaml
-      #     git diff
-      #     git add values.yaml
-      #     git commit -m "Update Values yaml"
-      #     git push
+          repository: pakdevops/manifests
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: manifests
       - name: Update Images via yq
         shell: bash
         run: |
-          sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+#          sudo wget https://github.com/mikefarah/yq/releases/download/3.4.1/yq_linux_amd64 -O /usr/bin/yq && sudo chmod +x /usr/bin/yq
+          ls
+          pwd
           MAIN_REPO=$(pwd)
           cd $MAIN_REPO
-          cd tes_manifests/env-dev/economics-fe
+          cd manifests/dev-env/maven
           echo "list current common*.image.repository"
           yq r --printMode pv values.yaml "common*.image.repository"
-          echo "latest GITLAB_IMAGE_NAME is registry.gitlab.com/target-digital-transformation/fe-apps/economics-fe/github"
-          yq w -i values.yaml common*.image.repository registry.gitlab.com/target-digital-transformation/fe-apps/economics-fe/github
+          echo "latest GITLAB_IMAGE_NAME is aamir454/bookinfo-project"
+          yq w -i values.yaml common*.image.repository aamir454/bookinfo-project
           yq r --printMode pv values.yaml "common*.image.repository"
 
           echo "list current common*.image.tag"
@@ -78,18 +80,19 @@ jobs:
 
       - name: Push manifests changes to ArgoCD's manifest repo
         run: |
-          cd tes_manifests
+          cd manifests
           git config user.name ${GITHUB_ACTOR}
           git config user.email ${GITHUB_ACTOR}@github.com
           git diff
           git add .
           git commit -m "${GITHUB_REPOSITORY}_${GITHUB_JOB}_${GITHUB_SHA:0:7}_details:${CI_COMMIT_MESSAGE}"
           git push
-  deploy_to_test:
-    runs-on: ubuntu-latest
-    needs:
-      - deploy_to_dev
-    steps:
-      - name: TO DO
-        run: echo "Deploy to test server to-do"
-        shell: bash
+#  deploy_to_test:
+#    runs-on: devops-pak
+#    needs:
+#      - deploy_to_dev
+#    steps:
+#      - name: TO DO
+#        run: echo "Deploy to test server to-do"
+#        shell: bash
+#
