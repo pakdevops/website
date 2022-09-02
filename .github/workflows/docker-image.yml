@@ -1,10 +1,10 @@
 name: build_and_push_to_manifest
 env:
   GITLAB_REGISTRY: aamir454/bookinfo-project
-  REPOSITORY_NAME: maven
-  ARGOCD_REPO_NAME: pakdevops/maven
+  REPOSITORY_NAME: website
+  ARGOCD_REPO_NAME: pakdevops/website
   NS: dev-deployment
-  CI_REGISTRY_IMAGE: maven
+  CI_REGISTRY_IMAGE: website
   GITLAB_IMAGE_NAME: 'aamir454/bookinfo-project:${GITHUB_SHA::8}'
 on:
   push:
@@ -61,7 +61,7 @@ jobs:
         shell: bash
         run: |
           ls
-          cd manifests/dev-env/maven
+          cd manifests/dev-env/site1
           ls
           export commitnum=${GITHUB_SHA::8}
           echo $commitnum
