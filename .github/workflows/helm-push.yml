@@ -32,9 +32,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+          
         name: Tag and Push image to gitlab registry
         run: |
-#          echo ${{ secrets.DOCKERHUB_TOKEN }} | docker login registry.gitlab.com -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           IMAGE_TAG=`echo ${GITHUB_REF} | awk -F "/" '{print $3}'`
           if [[ ${IMAGE_TAG} == v* ]]; then IMAGE_TAG=`echo ${IMAGE_TAG:1}`; fi
           echo ${IMAGE_TAG}
