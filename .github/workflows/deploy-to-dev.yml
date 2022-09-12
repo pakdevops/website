@@ -33,8 +33,8 @@ jobs:
 
   deploy_to_dev:
     runs-on: devops-pak
-    needs:
-      - build_and_push_image
+#    needs:
+#      - build_and_push_image
     steps:
       - name: Display the repository name
         run: echo "$REPOSITORY_NAME , $ARGOCD_REPO_NAME"
