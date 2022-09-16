@@ -48,4 +48,5 @@ jobs:
           yq e -i '.appVersion = env(imagetag)' Chart.yaml
           yq e -i '.version = env(imagetag)' Chart.yaml
           cat values.yaml
-          helm cm-push website/ --version="$imagetag" helm-charts
+          cd ..
+          helm cm-push site1/ --version="$imagetag" helm-charts
