@@ -1,0 +1,26 @@
+name: push helm chart
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+jobs:
+  build_and_push_image:
+    runs-on: devops-pak
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.4.2
+      -
+        name: Login to registry
+        uses: actions/checkout@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: image tag
+        run: |
+          docker tag aamir454/bookinfo-project:${GITHUB_SHA::8} aamir454/bookinfo-project: ${IMAGE_TAG} 
+      - name: Push image to gitlab registry
+        run: |
+          docker push aamir454/bookinfo-project: ${IMAGE_TAG}
