@@ -35,18 +35,18 @@ jobs:
           
         name: Tag and Push image to gitlab registry
         run: |
-          IMAGE_TAG=`echo ${GITHUB_REF} | awk -F "/" '{print $3}'`
-          if [[ ${IMAGE_TAG} == v* ]]; then IMAGE_TAG=`echo ${IMAGE_TAG:1}`; fi
-          echo ${IMAGE_TAG}
-
-          if [ "$DEFAULT_MOULE" != "ignore" ] ;
-          then
+#         IMAGE_TAG=`echo ${GITHUB_REF} | awk -F "/" '{print $3}'`
+#         if [[ ${IMAGE_TAG} == v* ]]; then IMAGE_TAG=`echo ${IMAGE_TAG:1}`; fi
+#         echo ${IMAGE_TAG}
+#
+#         if [ "$DEFAULT_MOULE" != "ignore" ] ;
+#         then
             docker pull aamir454/bookinfo-project:${GITHUB_SHA::8}
             docker tag aamir454/bookinfo-project:${GITHUB_SHA::8} aamir454/bookinfo-project:${IMAGE_TAG}
             docker tag aamir454/bookinfo-project:${GITHUB_SHA::8} aamir454/bookinfo-project:latest
             docker push aamir454/bookinfo-project
             docker push aamir454/bookinfo-project:${IMAGE_TAG}
-          fi
+#          fi
 
   push_chart_to_helm_repo:
     runs-on: devops-pak
