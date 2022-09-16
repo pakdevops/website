@@ -26,3 +26,26 @@ jobs:
         run: |
           docker push aamir454/bookinfo-project:${GITHUB_REF_NAME}
           
+    
+  deploy_to_dev:
+    runs-on: devops-pak
+    steps:
+      - name: Clone Deployment Manifests Repo
+        uses: actions/checkout@v2
+        with:
+          repository: pakdevops/manifests
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: manifests
+      - name: Update Images via yq
+        shell: bash
+        run: |
+          ls
+          cd manifests/test-env/site1
+          ls
+          export imagetag=${${GITHUB_REF_NAME}}
+          echo $imagetag
+          yq e -i '.image.tag = env(imagetag)' values.yaml
+          yq e -i '.appVersion = env(imagetag)' Chart.yaml
+          yq e -i '.version = env(imagetag)' Chart.yaml
+          cat values.yaml
+          helm cm-push website/ --version="$imagetag" helm-charts
