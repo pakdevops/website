@@ -50,4 +50,5 @@ jobs:
           cat values.yaml
           cd ..
           ls
-          helm cm-push site1/ --version="${GITHUB_REF_NAME}" helm-charts
+          echo ${GITHUB_REF_NAME}
+          helm cm-push site1/ --version=${GITHUB_REF_NAME} helm-charts
