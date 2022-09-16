@@ -51,4 +51,6 @@ jobs:
           cd ..
           ls
           echo ${GITHUB_REF_NAME}
+          helmv3 plugin install https://github.com/chartmuseum/helm-push
+          helm search repo helm-charts -l
           helmv3 cm-push site1 helm-charts
