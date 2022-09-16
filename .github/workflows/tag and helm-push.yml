@@ -6,7 +6,7 @@ on:
       - '*.*.*'
 
 jobs:
-  tag image:
+  tag_image:
     runs-on: devops-pak
     steps:
       - name: Checkout
@@ -27,7 +27,7 @@ jobs:
           docker push aamir454/bookinfo-project:${GITHUB_REF_NAME}
           
     
-  helm push:
+  helm_push:
     runs-on: devops-pak
     steps:
       - name: Clone Deployment Manifests Repo
