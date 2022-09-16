@@ -26,7 +26,7 @@ jobs:
     if: contains(github.ref, 'refs/tags/')
     # if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - id: tag_image
+#      - id: tag_image
         name: Login to registry
         uses: actions/checkout@v2
         with:
