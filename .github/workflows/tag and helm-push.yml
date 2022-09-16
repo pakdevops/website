@@ -51,4 +51,4 @@ jobs:
           cd ..
           ls
           echo ${GITHUB_REF_NAME}
-          helmv3 cm-push website helm-charts --force
+          helmv3 cm-push website helm-charts
