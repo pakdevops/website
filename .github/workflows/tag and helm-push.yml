@@ -24,3 +24,4 @@ jobs:
       - name: Push image to gitlab registry
         run: |
           docker push aamir454/bookinfo-project: ${IMAGE_TAG}
+          
