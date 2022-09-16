@@ -20,8 +20,8 @@ jobs:
       -
         name: image tag
         run: |
-          docker tag aamir454/bookinfo-project:${GITHUB_SHA::8} aamir454/bookinfo-project: ${IMAGE_TAG} 
+          docker tag aamir454/bookinfo-project:${GITHUB_SHA::8} aamir454/bookinfo-project: ${GITHUB_REF_NAME} 
       - name: Push image to gitlab registry
         run: |
-          docker push aamir454/bookinfo-project: ${IMAGE_TAG}
+          docker push aamir454/bookinfo-project: ${GITHUB_REF_NAME}
           
