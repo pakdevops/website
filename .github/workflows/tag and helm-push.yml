@@ -50,4 +50,4 @@ jobs:
           cat values.yaml
           cd ..
           ls
-          helm cm-push site1/ --version="$imagetag" helm-charts
+          helm cm-push site1/ --version="${GITHUB_REF_NAME}" helm-charts
