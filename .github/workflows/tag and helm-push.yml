@@ -42,9 +42,9 @@ jobs:
           ls
           cd manifests/test-env/site1
           ls
-          export imagetag=${${GITHUB_REF_NAME}}
+          export imagetag=${GITHUB_REF_NAME}
           echo $imagetag
-          yq e -i '.image.tag = env(imagetag)' values.yaml
+          yq e -i '.image.tag = env(imagetag)' values-test.yaml
           yq e -i '.appVersion = env(imagetag)' Chart.yaml
           yq e -i '.version = env(imagetag)' Chart.yaml
           cat values.yaml
