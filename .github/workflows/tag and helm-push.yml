@@ -50,7 +50,6 @@ jobs:
           yq e -i '.image.tag = env(imagetag)' values-test.yaml
           yq e -i '.appVersion = env(imagetag)' Chart.yaml
           yq e -i '.version = env(imagetag)' Chart.yaml
-          yq e -i '.name = site1' Chart.yaml
           cat Chart.yaml
           cd ..
           ls
