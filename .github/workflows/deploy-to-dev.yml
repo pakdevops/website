@@ -23,20 +23,16 @@ jobs:
       -
         name: Build docker image
         run: |
-          docker build -f Dockerfile -t aamir454/bookinfo-project:${GITHUB_SHA::8} .
+          docker build -f Dockerfile -t $IMAGE_REGISTRY_REPO:${GITHUB_SHA::8} .
       - name: Push image to gitlab registry
         run: |
-          docker push aamir454/bookinfo-project:${GITHUB_SHA::8}
+          docker push $IMAGE_REGISTRY_REPO:${GITHUB_SHA::8}
 
   deploy_to_dev:
     runs-on: devops-pak
 #    needs:
 #      - build_and_push_image
     steps:
-      - name: Display the repository name
-        run: echo "$REPOSITORY_NAME , $ARGOCD_REPO_NAME"
-        shell: bash
-
       - name: Setup User and email for GIT next push
         run: |
           git config --global user.email "action@github.com"
@@ -74,4 +70,3 @@ jobs:
           git add .
           git commit -m "${GITHUB_REPOSITORY}_${GITHUB_JOB}_${GITHUB_SHA:0:7}_details:${CI_COMMIT_MESSAGE}"
           git push
-          
