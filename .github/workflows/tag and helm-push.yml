@@ -23,8 +23,8 @@ jobs:
       -
         name: image tag
         run: |
-          docker pull $IMAGE_REGISTRY_REPO:7f36db8c
-          docker tag $IMAGE_REGISTRY_REPO:7f36db8c $IMAGE_REGISTRY_REPO:${GITHUB_REF_NAME} 
+          docker pull $IMAGE_REGISTRY_REPO:${GITHUB_SHA::8}
+          docker tag $IMAGE_REGISTRY_REPO:${GITHUB_SHA::8} $IMAGE_REGISTRY_REPO:${GITHUB_REF_NAME} 
       - name: Push image to gitlab registry
         run: |
           docker push $IMAGE_REGISTRY_REPO:${GITHUB_REF_NAME}
