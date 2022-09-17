@@ -1,5 +1,11 @@
 name: push helm chart
-
+env:
+  IMAGE_REGISTRY_REPO: aamir454/bookinfo-project
+  HELM_REPO: helm-charts
+  HELM-URL: http://charts.fiberdoctor.pk:8080/
+  HELM_USER: ${{ secrets.HELM_USER }}
+  HELM_PASSWORD: ${{ secrets.HELM_PASSWORD }}
+  APP-NAME: site1
 on:
   push:
     tags:
@@ -17,11 +23,11 @@ jobs:
       -
         name: image tag
         run: |
-          docker pull aamir454/bookinfo-project:7f36db8c
-          docker tag aamir454/bookinfo-project:7f36db8c aamir454/bookinfo-project:${GITHUB_REF_NAME} 
+          docker pull $IMAGE_REGISTRY_REPO:7f36db8c
+          docker tag $IMAGE_REGISTRY_REPO:7f36db8c $IMAGE_REGISTRY_REPO:${GITHUB_REF_NAME} 
       - name: Push image to gitlab registry
         run: |
-          docker push aamir454/bookinfo-project:${GITHUB_REF_NAME}
+          docker push $IMAGE_REGISTRY_REPO:${GITHUB_REF_NAME}
           
     
   helm_push:
@@ -44,11 +50,12 @@ jobs:
           yq e -i '.image.tag = env(imagetag)' values-test.yaml
           yq e -i '.appVersion = env(imagetag)' Chart.yaml
           yq e -i '.version = env(imagetag)' Chart.yaml
-          cat values-test.yaml
+          yq e -i '.name = site1' Chart.yaml
+          cat Chart.yaml
           cd ..
           ls
           echo ${GITHUB_REF_NAME}
-          helm repo add helm-charts http://charts.fiberdoctor.pk:8080/
-          helmv3 cm-push site1 helm-charts
-          helm search repo helm-charts -l
+          helm repo add $HELM_REPO $HELM-URL
+          helmv3 cm-push $APP-NAME $HELM_REPO
+          helm search repo $HELM_REPO -l
          
