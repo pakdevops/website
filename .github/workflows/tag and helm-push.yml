@@ -52,5 +52,5 @@ jobs:
           ls
           echo ${GITHUB_REF_NAME}
           helm repo add helm-charts http://charts.fiberdoctor.pk:8080/
-          helm search repo helm-charts -l
           helmv3 cm-push site1 helm-charts
+          helm search repo helm-charts -l
