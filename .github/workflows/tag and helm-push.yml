@@ -56,7 +56,7 @@ jobs:
           helm repo add helm-charts http://charts.fiberdoctor.pk:8080/
           helmv3 cm-push site1 helm-charts
           helm search repo helm-charts -l
-      - name: Push manifests changes to ArgoCD's manifest repo
+      - name: Deploy to Test-Env
         run: |
           cd manifests
           git config user.name ${GITHUB_ACTOR}
