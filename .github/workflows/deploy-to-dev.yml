@@ -1,10 +1,6 @@
 name: build_and_push_to_manifest
 env:
   IMAGE_REGISTRY_REPO: aamir454/bookinfo-project
-  HELM_REPO: helm-charts
-  HELM-URL: http://charts.fiberdoctor.pk:8080/
-  HELM_USER: ${{ secrets.HELM_USER }}
-  HELM_PASSWORD: ${{ secrets.HELM_PASSWORD }}
   APP-NAME: site1
 on:
   push:
@@ -30,6 +26,7 @@ jobs:
 
   deploy_to_dev:
     runs-on: devops-pak
+    needs: build_and_push_image
 #    needs:
 #      - build_and_push_image
     steps:
