@@ -31,6 +31,7 @@ jobs:
     
   helm_push:
     runs-on: devops-pak
+    needs: tag_image
     steps:
       - name: Clone Deployment Manifests Repo
         uses: actions/checkout@v2.4.2
