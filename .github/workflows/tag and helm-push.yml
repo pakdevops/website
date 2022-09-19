@@ -13,7 +13,7 @@ on:
 
 jobs:
   tag_image:
-    runs-on: devops-pak
+    runs-on: ubuntu-latest
     steps:
       - name: Login to registry
         uses: actions/checkout@v2.4.2
@@ -30,7 +30,7 @@ jobs:
           
     
   helm_push:
-    runs-on: devops-pak
+    runs-on: ubuntu-latest
     needs: tag_image
     steps:
       - name: Clone Deployment Manifests Repo

@@ -9,7 +9,7 @@ on:
 
 jobs:
   build_and_push_image:
-    runs-on: devops-pak
+    runs-on: ubuntu-latest
     steps:
       - name: Login to registry
         uses: actions/checkout@v2
@@ -25,7 +25,7 @@ jobs:
           docker push $IMAGE_REGISTRY_REPO:${GITHUB_SHA::8}
 
   deploy_to_dev:
-    runs-on: devops-pak
+    runs-on: ubuntu-latest
     needs: build_and_push_image
 #    needs:
 #      - build_and_push_image
