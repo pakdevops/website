@@ -34,9 +34,8 @@ jobs:
           
     
   helm_push:
-    runs-on: ubuntu-latest
+    runs-on: devops-pak
     needs: tag_image
-    image: bitnami/kubectl
     steps:
       - name: Clone Deployment Manifests Repo
         uses: actions/checkout@v2.4.2
