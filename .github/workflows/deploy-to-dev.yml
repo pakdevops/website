@@ -47,7 +47,7 @@ jobs:
           pwd
 
       - name: Clone Deployment Manifests Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2.4.2
         with:
           repository: pakdevops/manifests
           token: ${{ secrets.REPO_ACCESS_TOKEN2 }}
