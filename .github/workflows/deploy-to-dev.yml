@@ -27,6 +27,7 @@ jobs:
         run: |
           docker push $IMAGE_REGISTRY_REPO:${GITHUB_SHA::8}
 
+
   deploy_to_dev:
     runs-on: ubuntu-latest
     needs: build_and_push_image
@@ -42,13 +43,14 @@ jobs:
       - name: Display the current folders
         run: |
           pwd
+          echo $REPO_ACCESS_TOKEN
           ls
 
       - name: Clone Deployment Manifests Repo
         uses: actions/checkout@v2
         with:
           repository: pakdevops/manifests
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN2 }}
           path: manifests
       - name: Update Images via yq
         shell: bash
