@@ -42,9 +42,9 @@ jobs:
 
       - name: Display the current folders
         run: |
-          pwd
           echo $REPO_ACCESS_TOKEN
           ls
+          pwd
 
       - name: Clone Deployment Manifests Repo
         uses: actions/checkout@v2
