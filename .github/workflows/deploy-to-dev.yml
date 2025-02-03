@@ -47,11 +47,11 @@ jobs:
           pwd
 
       - name: Clone Deployment Manifests Repo
-        uses: actions/checkout@v2.4.2
+        uses: actions/checkout@v2
         with:
           repository: pakdevops/manifests
           ref: main
-          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          token: ${{ secrets.REPO_ACCESS_TOKEN2 }}
           path: manifests
       - name: Update Images via yq
         shell: bash
