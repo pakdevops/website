@@ -57,7 +57,7 @@ jobs:
         shell: bash
         run: |
           ls
-          cd manifests/dev-env/site1
+          cd manifests/dev-env/website
           ls
           export commitnum=${GITHUB_SHA::8}
           echo $commitnum
